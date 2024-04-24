@@ -19,8 +19,11 @@ public class MainActivity extends FlutterActivity {
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
         Log.d("@@@","configureFlutterEngine()");
+        getTuyaWhileListCountries();
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler((call, result) -> {
+
+                    getTuyaWhileListCountries();
                     if (call.method.equals("addnumbers")) {
                         int sum = addNumbers(call);
                         Log.v("@@@","Adding number in android native "+sum);
@@ -39,6 +42,10 @@ public class MainActivity extends FlutterActivity {
         int a = (int) args.get("n1");
         int b = (int) args.get("n2");
         return a + b;
+    }
+
+    private void getTuyaWhileListCountries(){
+        Log.v("@@@","getTuyaWhileListCountries() called");
     }
 }
 
