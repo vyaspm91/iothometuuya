@@ -3,6 +3,9 @@ package com.iothome.tuuya.iothometuuya;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.thingclips.smart.home.sdk.ThingHomeSdk;
+import com.thingclips.smart.optimus.sdk.ThingOptimusSdk;
+
 
 public class BaseApplication  extends Application {
     @Override
@@ -13,8 +16,8 @@ public class BaseApplication  extends Application {
         ThingHomeSdk.setDebugMode(true);
         ThingOptimusSdk.init(this);
 
-        SpUtils.getInstance().initSp(this);
-        ZXingLibrary.initDisplayOpinion(this);
-        CameraUtils.init(this);
+//        SpUtils.getInstance().initSp(this);
+//        ZXingLibrary.initDisplayOpinion(this);
+//        CameraUtils.init(this);
     }
 }
