@@ -2,9 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.iothome.tuuya.iothometuuya">
    <application
-       tools:replace="label"
+       tools:replace="label,allowBackup"
         android:label="iothometuuya"
-        android:name="${applicationName}"
+       android:allowBackup="false"
+       android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
