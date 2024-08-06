@@ -49,8 +49,7 @@ public class MainActivity extends FlutterActivity {
     }
 
     private void registerUser(String countryCode, String phoneNumber, String password, MethodChannel.Result result) {
-            String code = "";
-        TuyaHomeSdk.getUserInstance().registerAccountWithPhone(countryCode, phoneNumber, password, code, new IRegisterCallback() {
+        TuyaHomeSdk.getUserInstance().registerAccountWithPhone(countryCode, phoneNumber, password, new IRegisterCallback() {
             @Override
             public void onSuccess(User user) {
                 result.success("Register Successful");

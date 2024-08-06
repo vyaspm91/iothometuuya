@@ -8,7 +8,7 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+   /* throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")*/
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.iothome.tuuya.iothometuuya"
+        applicationId "com.example.smartbuddy"
         minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
@@ -75,8 +75,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar'])
     implementation 'com.alibaba:fastjson:1.1.67.android'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.14.9'
-    implementation 'com.tuya.smart:tuyasmart:4.0.0'
     implementation 'com.tuya.smart:tuyasmart-mqtt:3.17.0'
+    implementation ('com.thingclips.smart:thingsmart-geofence:5.1.0') {
+        exclude group: 'com.tuya.smart', module: 'tuyasmart-geofence'
+    }
+    implementation 'com.tuya.smart:tuyasmart-geofence:4.0.0'
 
     // The latest stable App SDK for Android.
 //    implementation 'com.facebook.soloader:soloader:0.10.4+'
