@@ -3,9 +3,9 @@
     package="com.iothome.tuuya.iothometuuya">
    <application
        tools:replace="label,allowBackup"
-        android:label="iothometuuya"
+        android:label="MySmartBuddy"
        android:allowBackup="false"
-       android:name="${applicationName}"
+       android:name=".BaseApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -36,9 +36,9 @@
 
        <meta-data
            android:name="THING_SMART_APPKEY"
-           android:value="cxpughfxjckw7uqjkqqe" />
+           android:value="kuck8vpu89jrm8sxfhdq" />
        <meta-data
            android:name="THING_SMART_SECRET"
-           android:value="jspvuye8yh43c5m99ccwmdmwtyeqd98u" />
+           android:value="jcyqtrkv3k5vj9ecr7jkkxt39c5ckydj" />
     </application>
 </manifest>
