@@ -10,15 +10,13 @@ import com.thingclips.smart.optimus.sdk.ThingOptimusSdk;
 import com.thingclips.smart.sdk.api.INeedLoginListener;
 
 
-public class BaseApplication  extends Application {
+public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         ThingHomeSdk.init(this);
         ThingHomeSdk.setDebugMode(true);
         ThingOptimusSdk.init(this);
-
 
         System.loadLibrary("c++_shared");
         System.loadLibrary("ssl");
@@ -30,12 +28,10 @@ public class BaseApplication  extends Application {
         ThingHomeSdk.setOnNeedLoginListener(new INeedLoginListener() {
             @Override
             public void onNeedLogin(Context context) {
-                startActivity(new Intent(BaseApplication.this, MainActivity.class));
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
             }
         });
-
-//        SpUtils.getInstance().initSp(this);
-//        ZXingLibrary.initDisplayOpinion(this);
-//        CameraUtils.init(this);
     }
 }

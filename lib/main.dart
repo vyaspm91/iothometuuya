@@ -23,7 +23,7 @@ class MyHomePage extends StatelessWidget {
   final String title;
   MyHomePage({required this.title});
 
-  static const platform = MethodChannel('com.example.smartbuddy/methods');
+  static const platform = MethodChannel("app.id.com/my_channel_name");
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  static const platform = MethodChannel('com.example.smartbuddy/methods"');
+  static const platform = MethodChannel("app.id.com/my_channel_name");
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _countryCodeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -181,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
 }
 
 class LoginPage extends StatelessWidget {
-  static const platform = MethodChannel('com.example.smartbuddy/methods"');
+  static const platform = MethodChannel("app.id.com/my_channel_name");
 
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _countryCodeController = TextEditingController();
@@ -246,7 +246,7 @@ class LoginPage extends StatelessWidget {
 }
 
 class PairDevicePage extends StatelessWidget {
-  static const platform = MethodChannel('com.example.smartbuddy/methods"');
+  static const platform = MethodChannel("app.id.com/my_channel_name");
 
   Future<void> _pairDevice() async {
     try {
@@ -274,7 +274,7 @@ class PairDevicePage extends StatelessWidget {
 }
 
 class DashboardPage extends StatelessWidget {
-  static const platform = MethodChannel('com.example.smartbuddy/methods');
+  static const platform = MethodChannel("app.id.com/my_channel_name");
 
   Future<void> _controlDevice(String deviceId, bool turnOn) async {
     try {

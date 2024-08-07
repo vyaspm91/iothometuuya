@@ -16,7 +16,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 
 public class MainActivity extends FlutterActivity {
-    private static final String CHANNEL = "com.example.smartbuddy/methods";
+    private static final String CHANNEL = "app.id.com/my_channel_name";
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
@@ -66,7 +66,7 @@ public class MainActivity extends FlutterActivity {
     }
 
     private void sendVerificationCode(String countryCode, String phoneNumber, MethodChannel.Result result) {
-        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(phoneNumber, "", countryCode, 1, new IResultCallback() {
+        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(phoneNumber, "8461809352", countryCode, 91, new IResultCallback() {
             @Override
             public void onSuccess() {
                 result.success("Verification code sent successfully.");

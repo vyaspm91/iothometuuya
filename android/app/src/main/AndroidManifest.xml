@@ -5,7 +5,7 @@
        tools:replace="label,allowBackup"
         android:label="MySmartBuddy"
        android:allowBackup="false"
-       android:name=".BaseApplication"
+       android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
