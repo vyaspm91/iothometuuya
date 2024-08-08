@@ -27,8 +27,9 @@ public class MainActivity extends FlutterActivity {
                             switch (call.method) {
                                 case "sendVerificationCode":
                                     String countryCode = call.argument("countryCode");
+                                    String region = call.argument("region");
                                     String email = call.argument("email");
-                                    sendVerificationCode(countryCode, email, result);
+                                    sendVerificationCode(countryCode, region, email, result);
                                     break;
                                 case "verifyCode":
                                     countryCode = call.argument("countryCode");
@@ -73,15 +74,15 @@ public class MainActivity extends FlutterActivity {
 
     private void checkSdk(MethodChannel.Result result) {
         try {
-            ThingHomeSdk.getUserInstance();
+            ThingHomeSdk.init(getApplication());
             result.success("Tuya SDK is initialized and working.");
         } catch (Exception e) {
             result.error("SDK_ERROR", "Tuya SDK is not initialized or not working.", e.getMessage());
         }
     }
 
-    private void sendVerificationCode(String countryCode, String email, MethodChannel.Result result) {
-        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(email, "", countryCode, 1, new IResultCallback() {
+    private void sendVerificationCode(String countryCode, String email, String region, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(email, region, countryCode, 1, new IResultCallback() {
             @Override
             public void onSuccess() {
                 result.success("Verification code sent successfully.");
@@ -139,8 +140,8 @@ public class MainActivity extends FlutterActivity {
     private void startDevicePairing(MethodChannel.Result result) {
         ThingHomeSdk.getActivatorInstance().newMultiActivator(new ActivatorBuilder()
                 .setContext(this)
-                .setSsid("Your_WiFi_SSID")
-                .setPassword("Your_WiFi_Password")
+                .setSsid("your_wifi_ssid")
+                .setPassword("your_wifi_password")
                 .setTimeOut(100)
                 .setListener(new IThingSmartActivatorListener() {
                     @Override

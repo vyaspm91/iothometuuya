@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,8 +29,10 @@ class MyHomePage extends StatelessWidget {
   Future<void> _checkSdk() async {
     try {
       final String result = await platform.invokeMethod('checkSdk');
+      debugPrint("Tuya SDK configure Successfully: '${result}'");
       Fluttertoast.showToast(msg: result);
     } on PlatformException catch (e) {
+      debugPrint("Failed to Configure Tuya SDK: '${e.message}'");
       Fluttertoast.showToast(msg: "Failed to check SDK: '${e.message}'.");
     }
   }
@@ -100,19 +103,21 @@ class _RegisterPageState extends State<RegisterPage> {
   static const platform = MethodChannel("app.id.com/my_channel_name");
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _countryCodeController = TextEditingController();
+  final TextEditingController _regionController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
   bool _isCodeSent = false;
 
-  Future<void> _sendVerificationCode(String countryCode, String email) async {
+  Future<void> _sendVerificationCode(String countryCode,String region, String email) async {
     try {
-      final String result = await platform.invokeMethod('sendVerificationCode', {
+      final String result = await platform.invokeMethod("sendVerificationCode", <String,dynamic>{
         'countryCode': countryCode,
         'email': email,
+        'region': region,
       });
-      Fluttertoast.showToast(msg: result);
       setState(() {
         _isCodeSent = true;
+        Fluttertoast.showToast(msg: result);
       });
     } on PlatformException catch (e) {
       Fluttertoast.showToast(msg: "Failed to send verification code: '${e.message}'.");
@@ -129,8 +134,10 @@ class _RegisterPageState extends State<RegisterPage> {
       Fluttertoast.showToast(msg: result);
       if (result == "Verification successful") {
         _registerUser(countryCode, email, _passwordController.text, code);
+        debugPrint("verify code successfully: '${result}'");
       }
     } on PlatformException catch (e) {
+      debugPrint("Failed to verify code: '${e.message}'");
       Fluttertoast.showToast(msg: "Failed to verify code: '${e.message}'.");
     }
   }
@@ -145,12 +152,14 @@ class _RegisterPageState extends State<RegisterPage> {
       });
       Fluttertoast.showToast(msg: result);
       if (result == "Register Successful") {
+        debugPrint("Register user Successfully: '${result}'");
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),
         );
       }
     } on PlatformException catch (e) {
+      debugPrint("Failed to register user: '${e.message}'");
       Fluttertoast.showToast(msg: "Failed to register user: '${e.message}'.");
     }
   }
@@ -159,9 +168,10 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       final String result = await platform.invokeMethod('test');
       print(result);
+      debugPrint("Method Channel is working: '${result}'");
       Fluttertoast.showToast(msg: "Method Channel is working: '${result}'.");
     } on PlatformException catch (e) {
-      print("Failed: '${e.message}'.");
+      debugPrint("Failed: Method Channel NOT working '${e.message}'.");
     }
   }
 
@@ -183,6 +193,10 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(labelText: 'Email Address'),
             ),
             TextField(
+              controller: _regionController,
+              decoration: InputDecoration(labelText: 'Region'),
+            ),
+            TextField(
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'Password'),
             ),
@@ -201,7 +215,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 if (_isCodeSent) {
                   _verifyCode(_countryCodeController.text, _emailController.text, _codeController.text);
                 } else {
-                  _sendVerificationCode(_countryCodeController.text, _emailController.text);
+                  _sendVerificationCode(_countryCodeController.text, _regionController.text ,_emailController.text);
                 }
               },
               child: Text(_isCodeSent ? 'Verify Code' : 'Send Verification Code'),
@@ -220,8 +234,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-
-
 class LoginPage extends StatelessWidget {
   static const platform = MethodChannel("app.id.com/my_channel_name");
   final TextEditingController _emailController = TextEditingController();
@@ -236,7 +248,10 @@ class LoginPage extends StatelessWidget {
         'password': password,
       });
       Fluttertoast.showToast(msg: result);
+      debugPrint("Success to Login user: '${result}'");
+
     } on PlatformException catch (e) {
+      debugPrint("Failed to Login user: '${e.message}'");
       Fluttertoast.showToast(msg: "Failed to login user: '${e.message}'.");
     }
   }
@@ -275,7 +290,6 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-
 
 class PairDevicePage extends StatelessWidget {
   static const platform = MethodChannel("app.id.com/my_channel_name");
