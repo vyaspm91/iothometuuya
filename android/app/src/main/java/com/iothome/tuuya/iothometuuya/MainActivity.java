@@ -2,15 +2,18 @@ package com.iothome.tuuya.iothometuuya;
 
 import androidx.annotation.NonNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.thingclips.smart.android.user.api.ILoginCallback;
+import com.thingclips.smart.android.user.api.IRegisterCallback;
+import com.thingclips.smart.android.user.bean.User;
+import com.thingclips.smart.home.sdk.ThingHomeSdk;
+import com.thingclips.smart.home.sdk.builder.ActivatorBuilder;
+import com.thingclips.smart.sdk.api.IResultCallback;
+import com.thingclips.smart.sdk.api.IThingSmartActivatorListener;
+import com.thingclips.smart.sdk.bean.DeviceBean;
 
-import io.flutter.Log;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-
 
 public class MainActivity extends FlutterActivity {
     private static final String CHANNEL = "app.id.com/my_channel_name";
@@ -18,34 +21,157 @@ public class MainActivity extends FlutterActivity {
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
-        Log.d("@@@","configureFlutterEngine()");
-        getTuyaWhileListCountries();
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
-                .setMethodCallHandler((call, result) -> {
+                .setMethodCallHandler(
+                        (call, result) -> {
+                            switch (call.method) {
+                                case "sendVerificationCode":
+                                    String countryCode = call.argument("countryCode");
+                                    String region = call.argument("region");
+                                    String email = call.argument("email");
+                                    sendVerificationCode(countryCode, region, email, result);
+                                    break;
+                                case "verifyCode":
+                                    countryCode = call.argument("countryCode");
+                                    email = call.argument("email");
+                                    String code = call.argument("code");
+                                    verifyCode(countryCode, email, code, result);
+                                    break;
+                                case "registerUser":
+                                    countryCode = call.argument("countryCode");
+                                    email = call.argument("email");
+                                    String password = call.argument("password");
+                                    code = call.argument("code");
+                                    registerUser(countryCode, email, password, code, result);
+                                    break;
+                                case "loginUser":
+                                    countryCode = call.argument("countryCode");
+                                    email = call.argument("email");
+                                    password = call.argument("password");
+                                    loginUser(countryCode, email, password, result);
+                                    break;
+                                case "startDevicePairing":
+                                    startDevicePairing(result);
+                                    break;
+                                case "controlDevice":
+                                    String deviceId = call.argument("deviceId");
+                                    boolean turnOn = call.argument("turnOn");
+                                    controlDevice(deviceId, turnOn, result);
+                                    break;
+                                case "test":
+                                    result.success("Hello, from Tuya! Method channel is Working");
+                                    break;
+                                case "checkSdk":
+                                    checkSdk(result);
+                                    break;
+                                default:
+                                    result.notImplemented();
+                                    break;
+                            }
+                        }
+                );
+    }
 
-                    getTuyaWhileListCountries();
-                    if (call.method.equals("addnumbers")) {
-                        int sum = addNumbers(call);
-                        Log.v("@@@","Adding number in android native "+sum);
-                        Map<String, Object> response = new HashMap<>();
-                        response.put("Sum", sum);
-                        Log.v("@@@","Adding number in android native "+sum);
-                        result.success(response);
-                    } else {
-                        result.notImplemented();
+    private void checkSdk(MethodChannel.Result result) {
+        try {
+            ThingHomeSdk.init(getApplication());
+            result.success("Tuya SDK is initialized and working.");
+        } catch (Exception e) {
+            result.error("SDK_ERROR", "Tuya SDK is not initialized or not working.", e.getMessage());
+        }
+    }
+
+    private void sendVerificationCode(String countryCode, String email, String region, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(email, region, countryCode, 1, new IResultCallback() {
+            @Override
+            public void onSuccess() {
+                result.success("Verification code sent successfully.");
+            }
+
+            @Override
+            public void onError(String code, String error) {
+                result.error(code, error, null);
+            }
+        });
+    }
+
+    private void verifyCode(String countryCode, String email, String code, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().checkCodeWithUserName(email, "", countryCode, code, 1, new IResultCallback() {
+            @Override
+            public void onSuccess() {
+                result.success("Verification successful");
+            }
+
+            @Override
+            public void onError(String code, String error) {
+                result.error(code, error, null);
+            }
+        });
+    }
+
+    private void registerUser(String countryCode, String email, String password, String code, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().registerAccountWithEmail(countryCode, email, password, code, new IRegisterCallback() {
+            @Override
+            public void onSuccess(User user) {
+                result.success("Register Successful");
+            }
+
+            @Override
+            public void onError(String code, String error) {
+                result.error(code, error, null);
+            }
+        });
+    }
+
+    private void loginUser(String countryCode, String email, String password, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().loginWithEmail(countryCode, email, password, new ILoginCallback() {
+            @Override
+            public void onSuccess(User user) {
+                result.success("Login Successful");
+            }
+
+            @Override
+            public void onError(String code, String error) {
+                result.error(code, error, null);
+            }
+        });
+    }
+
+    private void startDevicePairing(MethodChannel.Result result) {
+        ThingHomeSdk.getActivatorInstance().newMultiActivator(new ActivatorBuilder()
+                .setContext(this)
+                .setSsid("your_wifi_ssid")
+                .setPassword("your_wifi_password")
+                .setTimeOut(100)
+                .setListener(new IThingSmartActivatorListener() {
+                    @Override
+                    public void onError(String errorCode, String errorMsg) {
+                        result.error(errorCode, errorMsg, null);
                     }
-                });
+
+                    @Override
+                    public void onActiveSuccess(DeviceBean devResp) {
+                        result.success("Device Paired Successfully");
+                    }
+
+                    @Override
+                    public void onStep(String step, Object data) {
+                        // Handle each step if necessary
+                    }
+                }));
     }
 
-    private int addNumbers(MethodCall call) {
-        Map<String, Object> args = (Map<String, Object>) call.arguments;
-        int a = (int) args.get("n1");
-        int b = (int) args.get("n2");
-        return a + b;
-    }
+    private void controlDevice(String deviceId, boolean turnOn, MethodChannel.Result result) {
+        ThingHomeSdk.newDeviceInstance(deviceId).publishDps("{\"1\": " + (turnOn ? "true" : "false") + "}", new IResultCallback() {
+            @Override
+            public void onError(String code, String error) {
+                result.error(code, error, null);
+            }
 
-    private void getTuyaWhileListCountries(){
-        Log.v("@@@","getTuyaWhileListCountries() called");
+            @Override
+            public void onSuccess() {
+                result.success("Device Control Successful");
+            }
+        });
     }
 }
-

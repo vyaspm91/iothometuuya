@@ -36,9 +36,9 @@
 
        <meta-data
            android:name="THING_SMART_APPKEY"
-           android:value="cxpughfxjckw7uqjkqqe" />
+           android:value="svhh5y8ne49qqjprrkwf" />
        <meta-data
            android:name="THING_SMART_SECRET"
-           android:value="jspvuye8yh43c5m99ccwmdmwtyeqd98u" />
+           android:value="f5fwgn8ymdvptwnmcu4am45adv47y95p" />
     </application>
 </manifest>
