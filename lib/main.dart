@@ -85,47 +85,77 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   static const platform = MethodChannel("app.id.com/my_channel_name");
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _countryCodeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
+  bool _isCodeSent = false;
 
-  Future<void> _sendVerificationCode(
-      String countryCode, String phoneNumber) async {
+  Future<void> _sendVerificationCode(String countryCode, String email) async {
     try {
-      final String result =
-          await platform.invokeMethod('sendVerificationCode', {
+      final String result = await platform.invokeMethod('sendVerificationCode', {
         'countryCode': countryCode,
-        'phoneNumber': phoneNumber,
+        'email': email,
       });
       Fluttertoast.showToast(msg: result);
+      setState(() {
+        _isCodeSent = true;
+      });
     } on PlatformException catch (e) {
-      Fluttertoast.showToast(
-          msg: "Failed to send verification code: '${e.message}'.");
+      Fluttertoast.showToast(msg: "Failed to send verification code: '${e.message}'.");
     }
   }
 
-  Future<void> _registerUser(String countryCode, String phoneNumber,
-      String password, String code) async {
+  Future<void> _verifyCode(String countryCode, String email, String code) async {
+    try {
+      final String result = await platform.invokeMethod('verifyCode', {
+        'countryCode': countryCode,
+        'email': email,
+        'code': code,
+      });
+      Fluttertoast.showToast(msg: result);
+      if (result == "Verification successful") {
+        _registerUser(countryCode, email, _passwordController.text, code);
+      }
+    } on PlatformException catch (e) {
+      Fluttertoast.showToast(msg: "Failed to verify code: '${e.message}'.");
+    }
+  }
+
+  Future<void> _registerUser(String countryCode, String email, String password, String code) async {
     try {
       final String result = await platform.invokeMethod('registerUser', {
         'countryCode': countryCode,
-        'phoneNumber': phoneNumber,
+        'email': email,
         'password': password,
         'code': code,
       });
       Fluttertoast.showToast(msg: result);
+      if (result == "Register Successful") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
     } on PlatformException catch (e) {
       Fluttertoast.showToast(msg: "Failed to register user: '${e.message}'.");
+    }
+  }
+
+  Future<void> testMethodChannel() async {
+    try {
+      final String result = await platform.invokeMethod('test');
+      print(result);
+      Fluttertoast.showToast(msg: "Method Channel is working: '${result}'.");
+    } on PlatformException catch (e) {
+      print("Failed: '${e.message}'.");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Register'),
-      ),
+      appBar: AppBar(title: Text('Register')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -133,46 +163,45 @@ class _RegisterPageState extends State<RegisterPage> {
           children: <Widget>[
             TextField(
               controller: _countryCodeController,
-              decoration: InputDecoration(
-                labelText: 'Country Code',
-              ),
+              decoration: InputDecoration(labelText: 'Country Code'),
             ),
             TextField(
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-              ),
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email Address'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-              ),
+              decoration: InputDecoration(labelText: 'Password'),
             ),
-            TextField(
-              controller: _codeController,
-              decoration: InputDecoration(
-                labelText: 'Verification Code',
+            if (_isCodeSent)
+              TextField(
+                controller: _codeController,
+                decoration: InputDecoration(labelText: 'Verification Code'),
               ),
-            ),
             SizedBox(height: 20),
+
+            ElevatedButton(
+              onPressed: testMethodChannel,
+              child: Text('Test MethodChannel'),
+            ),
+
             ElevatedButton(
               onPressed: () {
-                _sendVerificationCode(
-                    _countryCodeController.text, _phoneController.text);
+                if (_isCodeSent) {
+                  _verifyCode(_countryCodeController.text, _emailController.text, _codeController.text);
+                } else {
+                  _sendVerificationCode(_countryCodeController.text, _emailController.text);
+                }
               },
-              child: Text('Send Verification Code'),
+              child: Text(_isCodeSent ? 'Verify Code' : 'Send Verification Code'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                _registerUser(
-                    _countryCodeController.text,
-                    _phoneController.text,
-                    _passwordController.text,
-                    _codeController.text);
-              },
-              child: Text('Register'),
-            ),
+            if (_isCodeSent)
+              ElevatedButton(
+                onPressed: () {
+                  _verifyCode(_countryCodeController.text, _emailController.text, _codeController.text);
+                },
+                child: Text('Register'),
+              ),
           ],
         ),
       ),
@@ -180,19 +209,19 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
+
+
 class LoginPage extends StatelessWidget {
   static const platform = MethodChannel("app.id.com/my_channel_name");
-
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _countryCodeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> _loginUser(
-      String countryCode, String phoneNumber, String password) async {
+  Future<void> _loginUser(String countryCode, String email, String password) async {
     try {
       final String result = await platform.invokeMethod('loginUser', {
         'countryCode': countryCode,
-        'phoneNumber': phoneNumber,
+        'email': email,
         'password': password,
       });
       Fluttertoast.showToast(msg: result);
@@ -204,9 +233,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
+      appBar: AppBar(title: Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -214,27 +241,20 @@ class LoginPage extends StatelessWidget {
           children: <Widget>[
             TextField(
               controller: _countryCodeController,
-              decoration: InputDecoration(
-                labelText: 'Country Code',
-              ),
+              decoration: InputDecoration(labelText: 'Country Code'),
             ),
             TextField(
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-              ),
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email Address'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-              ),
+              decoration: InputDecoration(labelText: 'Password'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                _loginUser(_countryCodeController.text, _phoneController.text,
-                    _passwordController.text);
+                _loginUser(_countryCodeController.text, _emailController.text, _passwordController.text);
               },
               child: Text('Login'),
             ),
@@ -244,6 +264,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
+
 
 class PairDevicePage extends StatelessWidget {
   static const platform = MethodChannel("app.id.com/my_channel_name");

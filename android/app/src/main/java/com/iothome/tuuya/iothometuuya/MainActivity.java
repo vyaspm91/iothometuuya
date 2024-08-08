@@ -27,27 +27,27 @@ public class MainActivity extends FlutterActivity {
                             switch (call.method) {
                                 case "sendVerificationCode":
                                     String countryCode = call.argument("countryCode");
-                                    String phoneNumber = call.argument("phoneNumber");
-                                    sendVerificationCode(countryCode, phoneNumber, result);
+                                    String email = call.argument("email");
+                                    sendVerificationCode(countryCode, email, result);
                                     break;
                                 case "verifyCode":
                                     countryCode = call.argument("countryCode");
-                                    phoneNumber = call.argument("phoneNumber");
+                                    email = call.argument("email");
                                     String code = call.argument("code");
-                                    verifyCode(countryCode, phoneNumber, code, result);
+                                    verifyCode(countryCode, email, code, result);
                                     break;
                                 case "registerUser":
                                     countryCode = call.argument("countryCode");
-                                    phoneNumber = call.argument("phoneNumber");
+                                    email = call.argument("email");
                                     String password = call.argument("password");
                                     code = call.argument("code");
-                                    registerUser(countryCode, phoneNumber, password, code, result);
+                                    registerUser(countryCode, email, password, code, result);
                                     break;
                                 case "loginUser":
                                     countryCode = call.argument("countryCode");
-                                    phoneNumber = call.argument("phoneNumber");
+                                    email = call.argument("email");
                                     password = call.argument("password");
-                                    loginUser(countryCode, phoneNumber, password, result);
+                                    loginUser(countryCode, email, password, result);
                                     break;
                                 case "startDevicePairing":
                                     startDevicePairing(result);
@@ -57,6 +57,9 @@ public class MainActivity extends FlutterActivity {
                                     boolean turnOn = call.argument("turnOn");
                                     controlDevice(deviceId, turnOn, result);
                                     break;
+                                case "test":
+                                    result.success("Hello, from Tuya! Method channel is Working");
+                                    break;
                                 default:
                                     result.notImplemented();
                                     break;
@@ -65,8 +68,9 @@ public class MainActivity extends FlutterActivity {
                 );
     }
 
-    private void sendVerificationCode(String countryCode, String phoneNumber, MethodChannel.Result result) {
-        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(phoneNumber, "8461809352", countryCode, 91, new IResultCallback() {
+
+    private void sendVerificationCode(String countryCode, String email, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(email, "", countryCode, 1, new IResultCallback() {
             @Override
             public void onSuccess() {
                 result.success("Verification code sent successfully.");
@@ -79,11 +83,11 @@ public class MainActivity extends FlutterActivity {
         });
     }
 
-    private void verifyCode(String countryCode, String phoneNumber, String code, MethodChannel.Result result) {
-        ThingHomeSdk.getUserInstance().checkCodeWithUserName(phoneNumber, "", countryCode, code, 1, new IResultCallback() {
+    private void verifyCode(String countryCode, String email, String code, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().checkCodeWithUserName(email, "", countryCode, code, 1, new IResultCallback() {
             @Override
             public void onSuccess() {
-                result.success("Verification code verified successfully.");
+                result.success("Verification successful");
             }
 
             @Override
@@ -93,8 +97,8 @@ public class MainActivity extends FlutterActivity {
         });
     }
 
-    private void registerUser(String countryCode, String phoneNumber, String password, String code, MethodChannel.Result result) {
-        ThingHomeSdk.getUserInstance().registerAccountWithPhone(countryCode, phoneNumber, password, code, new IRegisterCallback() {
+    private void registerUser(String countryCode, String email, String password, String code, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().registerAccountWithEmail(countryCode, email, password, code, new IRegisterCallback() {
             @Override
             public void onSuccess(User user) {
                 result.success("Register Successful");
@@ -107,8 +111,8 @@ public class MainActivity extends FlutterActivity {
         });
     }
 
-    private void loginUser(String countryCode, String phoneNumber, String password, MethodChannel.Result result) {
-        ThingHomeSdk.getUserInstance().loginWithPhonePassword(countryCode, phoneNumber, password, new ILoginCallback() {
+    private void loginUser(String countryCode, String email, String password, MethodChannel.Result result) {
+        ThingHomeSdk.getUserInstance().loginWithEmail(countryCode, email, password, new ILoginCallback() {
             @Override
             public void onSuccess(User user) {
                 result.success("Login Successful");
