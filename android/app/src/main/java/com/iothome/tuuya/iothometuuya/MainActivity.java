@@ -60,6 +60,9 @@ public class MainActivity extends FlutterActivity {
                                 case "test":
                                     result.success("Hello, from Tuya! Method channel is Working");
                                     break;
+                                case "checkSdk":
+                                    checkSdk(result);
+                                    break;
                                 default:
                                     result.notImplemented();
                                     break;
@@ -68,6 +71,14 @@ public class MainActivity extends FlutterActivity {
                 );
     }
 
+    private void checkSdk(MethodChannel.Result result) {
+        try {
+            ThingHomeSdk.getUserInstance();
+            result.success("Tuya SDK is initialized and working.");
+        } catch (Exception e) {
+            result.error("SDK_ERROR", "Tuya SDK is not initialized or not working.", e.getMessage());
+        }
+    }
 
     private void sendVerificationCode(String countryCode, String email, MethodChannel.Result result) {
         ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(email, "", countryCode, 1, new IResultCallback() {

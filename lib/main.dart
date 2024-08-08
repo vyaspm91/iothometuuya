@@ -25,6 +25,15 @@ class MyHomePage extends StatelessWidget {
 
   static const platform = MethodChannel("app.id.com/my_channel_name");
 
+  Future<void> _checkSdk() async {
+    try {
+      final String result = await platform.invokeMethod('checkSdk');
+      Fluttertoast.showToast(msg: result);
+    } on PlatformException catch (e) {
+      Fluttertoast.showToast(msg: "Failed to check SDK: '${e.message}'.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +79,10 @@ class MyHomePage extends StatelessWidget {
                 );
               },
               child: Text('Dashboard'),
+            ),
+            ElevatedButton(
+              onPressed: _checkSdk,
+              child: Text('Check Tuya SDK'),
             ),
           ],
         ),
@@ -179,12 +192,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 decoration: InputDecoration(labelText: 'Verification Code'),
               ),
             SizedBox(height: 20),
-
             ElevatedButton(
               onPressed: testMethodChannel,
               child: Text('Test MethodChannel'),
             ),
-
             ElevatedButton(
               onPressed: () {
                 if (_isCodeSent) {
