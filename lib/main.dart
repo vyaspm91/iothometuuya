@@ -37,6 +37,17 @@ class MyHomePage extends StatelessWidget {
     }
   }
 
+  Future<void> _getBatteryLevel() async {
+    try {
+      final int batteryLevel = await platform.invokeMethod('getBatteryLevel');
+      debugPrint("Battery level: $batteryLevel%");
+      Fluttertoast.showToast(msg: "Battery level: $batteryLevel%");
+    } on PlatformException catch (e) {
+      debugPrint("Failed to get battery level: '${e.message}'.");
+      Fluttertoast.showToast(msg: "Failed to get battery level: '${e.message}'.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,6 +97,10 @@ class MyHomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: _checkSdk,
               child: Text('Check Tuya SDK'),
+            ),
+            ElevatedButton(
+              onPressed: _getBatteryLevel,
+              child: Text('Get Battery Level'),
             ),
           ],
         ),

@@ -15,19 +15,26 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Initialize Tuya SDK
+        // Initialize Tuya SDK with error handling
+        try {
             ThingHomeSdk.init(this);
             ThingHomeSdk.setDebugMode(true);
-            /*ThingOptimusSdk.init(this);*/
             Log.d(TAG, "Tuya SDK initialized successfully");
-        ThingHomeSdk.setOnNeedLoginListener(new INeedLoginListener() {
-            @Override
-            public void onNeedLogin(Context context) {
-                startActivity(new Intent(BaseApplication.this, MainActivity.class));
-                Log.d(TAG, "Login required");
-                // Implement your logic for handling login requirement here
-            }
-        });
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to initialize Tuya SDK: " + e.getMessage(), e);
+        }
+
+        // Set the login listener
+        try {
+            ThingHomeSdk.setOnNeedLoginListener(new INeedLoginListener() {
+                @Override
+                public void onNeedLogin(Context context) {
+                    startActivity(new Intent(BaseApplication.this, MainActivity.class));
+                    Log.d(TAG, "Login required");
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to set login listener: " + e.getMessage(), e);
+        }
     }
 }

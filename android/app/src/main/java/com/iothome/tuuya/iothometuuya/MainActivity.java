@@ -1,5 +1,7 @@
 package com.iothome.tuuya.iothometuuya;
 
+import android.os.BatteryManager;
+
 import androidx.annotation.NonNull;
 
 import com.thingclips.smart.android.user.api.ILoginCallback;
@@ -64,12 +66,25 @@ public class MainActivity extends FlutterActivity {
                                 case "checkSdk":
                                     checkSdk(result);
                                     break;
+                                case "getBatteryLevel":
+                                    int batteryLevel = getBatteryLevel();
+                                    result.success(batteryLevel);
+                                    break;
                                 default:
                                     result.notImplemented();
                                     break;
                             }
                         }
                 );
+    }
+
+    private int getBatteryLevel() {
+        int batteryLevel = 0;
+        BatteryManager batteryManager = (BatteryManager) getSystemService(BATTERY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        }
+        return batteryLevel;
     }
 
     private void checkSdk(MethodChannel.Result result) {
