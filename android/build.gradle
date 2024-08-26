@@ -31,6 +31,30 @@ allprojects {
         jcenter()
         maven { url 'https://maven-other.tuya.com/repository/maven-releases/' }
         maven { url "https://maven-other.tuya.com/repository/maven-commercial-releases/" }
+        maven {
+            url "https://maven.aliyun.com/repository/public"
+        }
+        maven {
+            url "https://maven.aliyun.com/repository/spring"
+        }
+        maven {
+            url "https://maven.aliyun.com/repository/gradle-plugin"
+        }
+        maven {
+            url "https://maven.aliyun.com/repository/releases"
+        }
+        maven {
+            url "https://maven.aliyun.com/repository/snapshots"
+        }
+        maven {
+            url "https://maven.aliyun.com/repository/jcenter"
+        }
+        maven {
+            url "https://repo.tuya.com/repository/maven-releases/"
+        }
+        maven {
+            url "https://repo.tuya.com/repository/maven-snapshots/"
+        }
 //        maven { url 'https://jitpack.io' }
 //        maven { url 'https://maven.aliyun.com/repository/public' }
 //        maven { url 'https://central.maven.org/maven2/' }
