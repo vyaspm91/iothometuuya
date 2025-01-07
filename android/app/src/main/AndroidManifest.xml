@@ -1,6 +1,10 @@
+<!--suppress ALL -->
+
+
+
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.iothome.tuuya.iothometuuya">
+    xmlns:tools="http://schemas.android.com/tools">
    <application
        tools:replace="label,allowBackup"
         android:label="iothometuuya"
@@ -36,9 +40,9 @@
 
        <meta-data
            android:name="THING_SMART_APPKEY"
-           android:value="svhh5y8ne49qqjprrkwf"/>
+           android:value="878yghw7cvcaqwfsyq3v"/>
        <meta-data
            android:name="THING_SMART_SECRET"
-           android:value="f5fwgn8ymdvptwnmcu4am45adv47y95p"/>
+           android:value="mwyvhhvd4m37wvasfcj8ed8r47nkqn3k"/>
     </application>
 </manifest>

@@ -1,5 +1,6 @@
 package com.iothome.tuuya.iothometuuya;
 
+//import android.app.Application;
 import android.app.Application;
 import android.content.Context;
 import com.thingclips.smart.home.sdk.ThingHomeSdk;
@@ -15,9 +16,11 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        String appKey = "878yghw7cvcaqwfsyq3v";
+        String SecretKey = "mwyvhhvd4m37wvasfcj8ed8r47nkqn3k";
         // Initialize Tuya SDK with error handling
         try {
-            ThingHomeSdk.init(this);
+            ThingHomeSdk.init((Application) getApplicationContext(), "878yghw7cvcaqwfsyq3v", "mwyvhhvd4m37wvasfcj8ed8r47nkqn3k");
             ThingHomeSdk.setDebugMode(true);
             Log.d(TAG, "Tuya SDK initialized successfully");
         } catch (Exception e) {
